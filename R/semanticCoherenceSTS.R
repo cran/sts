@@ -1,0 +1,74 @@
+#' Semantic Coherence
+#' 
+#' Calculates semantic coherence for an STS model.
+#' 
+#' @param beta the beta probability  matrix (topic-word distributions) for a given document or alpha-level
+#' @param documents the documents over which to calculate coherence
+#' @param vocab the vocabulary corresponding to the terms in the beta matrix
+#' @param M the number of top words to consider per topic
+#' 
+#' @return a numeric vector containing semantic coherence for each topic
+#' 
+#' @examples 
+#' #An example using the Gadarian data from the stm package.  From Raw text to 
+#' # fitted model using textProcessor() which leverages the tm Package
+#' library("tm"); library("stm"); library("sts")
+#' temp<-textProcessor(documents=gadarian$open.ended.response,
+#' metadata=gadarian, verbose = FALSE)
+#' out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
+#' X <- model.matrix(~1+out$meta$treatment + out$meta$pid_rep + 
+#' out$meta$treatment * out$meta$pid_rep)[,-1]
+#' X_seed <- as.matrix(out$meta$treatment)
+#' ## low max iteration number just for testing
+#' sts_estimate <- sts(X, X_seed, out, numTopics = 3, verbose = FALSE, 
+#' parallelize = FALSE, maxIter = 3, initialization = 'anchor')
+#' full_beta_distn <- exp(sts_estimate$mv + sts_estimate$kappa$kappa_t + 
+#' sts_estimate$kappa$kappa_s %*% diag(apply(sts_estimate$alpha[,3:5], 2, mean)))
+#' full_beta_distn <- t(apply(full_beta_distn, 1, 
+#' function(m) m / colSums(full_beta_distn)))
+#' semanticCoherenceSTS(full_beta_distn, out$documents, out$vocab)
+#' @export
+semanticCoherenceSTS = function (beta, documents, vocab, M = 10) 
+{
+  semCoh1beta <- function(mat, M, beta){
+    #Get the Top N Words
+    top.words <- apply(beta, 1, order, decreasing=TRUE)[1:M,]
+    wordlist <- unique(as.vector(top.words))
+    mat <- mat[,wordlist]
+    mat$v <- ifelse(mat$v>1, 1,mat$v) #binarize
+    
+    #do the cross product to get co-occurrences
+    cross <- slam::tcrossprod_simple_triplet_matrix(t(mat))
+    
+    #create a list object with the renumbered words (so now it corresponds to the rows in the table)
+    temp <- match(as.vector(top.words),wordlist)
+    labels <- split(temp, rep(1:nrow(beta), each=M)) ### CHECK
+    
+    #Note this could be done with recursion in an elegant way, but let's just be simpler about it.
+    sem <- function(ml,cross) {
+      m <- ml[1]; l <- ml[2]
+     # log(.01 + cross[m,l]) - log(cross[l,l] + .01)  ## THIS LINE MATCHES THE STM PACKAGE
+      log(1 + cross[m,l]) - log(cross[l,l]) ## THIS LINE WILL MATCH THE ORIGINAL PAPER BY MIMNO ET AL (Optimizing Semantic Coherence in Topic Models)
+    }
+    result <- vector(length=nrow(beta))
+    for(k in 1:nrow(beta)) {
+      grid <- expand.grid(labels[[k]],labels[[k]])
+      colnames(grid) <- c("m", "l") #corresponds to original paper
+      grid <- grid[grid$m > grid$l,]
+      calc <- apply(grid,1,sem,cross)
+      result[k] <- sum(calc)
+    }
+    return(result)
+  }
+  
+  
+  args <- asSTMCorpus(documents)
+  documents <- args$documents
+  beta <- log(beta)
+  # triplet <- doc.to.ijv(documents)
+  # mat <- slam::simple_triplet_matrix(triplet$i, triplet$j, 
+  #                                    triplet$v, ncol = model$settings$dim$V)
+  mat <- convertCorpus(documents, vocab, type="slam")
+  result = semCoh1beta(mat, M, beta = t(beta))
+  return(result)
+}

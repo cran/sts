@@ -1,0 +1,33 @@
+#' A Structural Topic and Sentiment-Discourse Model for Text Analysis
+#' 
+#' This package implements the Structural Topic and Sentiment-Discourse  
+#' (STS) model, which allows researchers to estimate topic models with 
+#' document-level metadata that determines both topic prevalence and 
+#' sentiment-discourse. The sentiment-discourse is modeled as a document-level 
+#' latent variable for each topic that modulates the word frequency within a 
+#' topic. These latent topic sentiment-discourse variables are controlled by 
+#' the document-level metadata. The STS model can be useful for regression 
+#' analysis with text data in addition to topic modeling's traditional 
+#' use of descriptive analysis.
+#' 
+#' Function to fit the model: \code{\link{sts}} 
+#' 
+#' Functions for Post-Estimation: \code{\link{estimateRegnTables}}
+#' \code{\link{exclusivitySTS}} \code{\link{semanticCoherenceSTS}}
+#'  \code{\link{heldoutLikelihood}}
+#' 
+#' 
+#' @name sts-package
+#' @docType package
+#' @author Author: Shawn Mankad and Li Chen
+#' 
+#' Maintainer: Shawn Mankad <smankad@@ncsu.edu>
+#' @seealso \code{\link{sts}}
+#' @references Chen L. and Mankad, S. (forthcoming) "A Structural Topic and 
+#' Sentiment-Discourse Model for Text Analysis" Management Science.
+#' @keywords package
+#' 
+#' @import Rcpp, RcppArmadillo, glmnet, matrixStats, slam, foreach, doParallel, 
+#' parallel, stm, Matrix, mvtnorm
+#' @useDynLib sts, .registration = TRUE
+NULL
