@@ -5,11 +5,17 @@
 #' Estimate Gamma coefficients (along with standard errors, p-values, etc.) to  
 #' assess how document-level meta-data determine prevalence and sentiment/discourse  
 #'  
-#' @param alpha the estimated alpha variable values for each document
-#' @param mu the mean (fitted) values for alpha based on document-level variables * estimated 
-#' Gamma for each document
-#' @param sigma the estimated covariance matrix for the alpha parameters
-#' @param X the covariates used to estimate the STS model
+#' @param object an sts object
+#' @param prevalence_sentiment A formula object with no response variable or a 
+#' design matrix with the covariates. If a formula, the variables must be 
+#' contained in corpus$meta.
+#' @param corpus The document term matrix to be modeled in a sparse term count matrix with one row
+#' per document and one column per term. The object must be a list of with each element 
+#' corresponding to a document. Each document is represented
+#' as an integer matrix with two rows, and columns equal to the number of unique
+#' vocabulary words in the document.  The first row contains the 1-indexed
+#' vocabulary entry and the second row contains the number of times that term
+#' appears. This is the same format in the \code{\link[stm]{stm}} package. 
 #' 
 #' @return a list of tables with regression coefficient estimates. The first 
 #' <num-topic> elements pertain to prevalence; the latter  <num-topic> elements 
@@ -20,18 +26,25 @@
 #' temp<-textProcessor(documents=gadarian$open.ended.response,
 #' metadata=gadarian, verbose = FALSE)
 #' out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
-#' X <- model.matrix(~1+out$meta$treatment + out$meta$pid_rep + 
-#' out$meta$treatment * out$meta$pid_rep)[,-1]
-#' X_seed <- as.matrix(out$meta$treatment)
+#' out$meta$noTreatment <- ifelse(out$meta$treatment == 1, -1, 1)
 #' ## low max iteration number just for testing
-#' sts_estimate <- sts(X, X_seed, out, numTopics = 3, verbose = FALSE, 
-#' parallelize = FALSE, maxIter = 3, initialization = 'anchor')
-#' regn_tables <- estimateRegnTables(sts_estimate$alpha, mu = sts_estimate$mu, 
-#' sigma = sts_estimate$sigma, X = X)
-#' printRegnTables(regn_tables)
+#' sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out, K = 3, maxIter = 2)
+#' regns <- estimateRegns(sts_estimate, ~treatment*pid_rep, out)
+#' printRegnTables(x = regns)
 #' }
 #' @export
-estimateRegnTables = function(alpha, mu, sigma, X) {
+estimateRegns = function(object, prevalence_sentiment, corpus) {
+  
+  alpha <- object$alpha
+  mu <- object$mu
+  sigma <- object$sigma
+  
+  if(inherits(prevalence_sentiment,"formula")) {
+    X <- model.matrix(prevalence_sentiment, data = corpus$meta)[,-1, drop = FALSE]
+  } else {
+    X <- prevalence_sentiment
+  }
+
   D <- nrow(alpha)
   K <- ceiling(ncol(alpha)/2)
 
@@ -127,6 +140,7 @@ estimateRegnTables = function(alpha, mu, sigma, X) {
     
     coefficients <- cbind(est, se, tval, p)
     rownames(coefficients) <- attr(storage[[1]][[1]]$est, "names") 
+    rownames(coefficients)[1] <- "Intercept"
     colnames(coefficients) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
     tables[[k]] <- coefficients
   }

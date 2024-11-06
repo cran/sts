@@ -16,19 +16,16 @@
 #' temp<-textProcessor(documents=gadarian$open.ended.response,
 #' metadata=gadarian, verbose = FALSE)
 #' out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
-#' X <- model.matrix(~1+out$meta$treatment + out$meta$pid_rep + 
-#' out$meta$treatment * out$meta$pid_rep)[,-1]
-#' X_seed <- as.matrix(out$meta$treatment)
+#' out$meta$noTreatment <- ifelse(out$meta$treatment == 1, -1, 1)
 #' ## low max iteration number just for testing
-#' sts_estimate <- sts(X, X_seed, out, numTopics = 3, verbose = FALSE, 
-#' parallelize = FALSE, maxIter = 3, initialization = 'anchor')
+#' sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out, K = 3, maxIter = 2)
 #' full_beta_distn <- exp(sts_estimate$mv + sts_estimate$kappa$kappa_t + 
 #' sts_estimate$kappa$kappa_s %*% diag(apply(sts_estimate$alpha[,3:5], 2, mean)))
 #' full_beta_distn <- t(apply(full_beta_distn, 1, 
 #' function(m) m / colSums(full_beta_distn)))
-#' semanticCoherenceSTS(full_beta_distn, out$documents, out$vocab)
+#' topicSemanticCoherence(full_beta_distn, out$documents, out$vocab)
 #' @export
-semanticCoherenceSTS = function (beta, documents, vocab, M = 10) 
+topicSemanticCoherence = function (beta, documents, vocab, M = 10) 
 {
   semCoh1beta <- function(mat, M, beta){
     #Get the Top N Words

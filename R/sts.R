@@ -14,8 +14,11 @@
 #' each of the topics. The document-specific content covariates affect how much 
 #' (prevalence) and the way in which a topic is discussed (sentiment-discourse). 
 #' 
-#' @param X A data frame / matrix (number of documents x p) of covariates that influence document-specific topic prevelance and sentiment-discourse.
-#' @param X_seed A vector of length equal to the corpus size. This is the key experimental variable (e.g., review rating or binary indicator of experiment/control group.).
+#' @param prevalence_sentiment A formula object with no response variable or a 
+#' design matrix with the covariates. The variables must be 
+#' contained in corpus$meta.
+#' @param initializationVar A formula with a single variable for use in the initialization of latent sentiment. This argument  
+#' is usually the key experimental variable (e.g., review rating binary indicator of experiment/control group).
 #' @param corpus The document term matrix to be modeled in a sparse term count matrix with one row
 #' per document and one column per term. The object must be a list of with each element 
 #' corresponding to a document. Each document is represented
@@ -23,19 +26,18 @@
 #' vocabulary words in the document.  The first row contains the 1-indexed
 #' vocabulary entry and the second row contains the number of times that term
 #' appears. This is the same format in the \code{\link[stm]{stm}} package. 
-#' @param numTopics A positive integer (of size 2 or greater) representing
+#' @param K A positive integer (of size 2 or greater) representing
 #' the desired number of topics. 
 #' @param maxIter A positive integer representing the max number of VEM iterations allowed.
+#' @param convTol Convergence tolerance for the variational EM estimation algorithm; Default value = 1e-5.
 #' @param initialization Character argument that allows the user to specify an initialization
-#' method. The default choice, \code{"stm"}, uses a fitted STM model (Roberts et al. 2014, 2016) 
+#' method. The default choice, \code{"anchor"} to initialize prevalence according to anchor words and 
+#' the key experimental covariate identified in argument \code{initializationVar}. One can also use 
+#' \code{"stm"}, which uses a fitted STM model (Roberts et al. 2014, 2016) 
 #' to initialize coefficients related to prevalence and sentiment-discourse. 
-#' One can also choose \code{"anchor"} to initialize prevalence according to anchor words and 
-#' the key experimental covariate identified in argument \code{X_seed}.
-#' @param X Data frame of document-specific content covariates affect how much (prevalence) and
-#'  the way in which a topic is discussed (sentiment-discourse).
-#' @param estimation A character input specifying how kappa should be estimated. \code{"lasso"} (default) allows for 
+#' @param kappaEstimation A character input specifying how kappa should be estimated. \code{"lasso"} allows for 
 #' penalties on the L1 norm.  We estimate a regularization path and then select the optimal
-#' shrinkage parameter using AIC. \code{"adjusted"} does not utilize the lasso penalty. 
+#' shrinkage parameter using AIC. \code{"adjusted"} (default) utilizes the lasso penalty with an adjusted aggregated Poisson regression. 
 #' All options use an approximation framework developed in Taddy (2013) called
 #' Distributed Multinomial Regression which utilizes a factorized poisson
 #' approximation to the multinomial.  See Li and Mankad (forthcoming) on the implementation here.  
@@ -58,7 +60,7 @@
 #' Gamma for each document}
 #' 
 #' 
-#' @seealso  \code{\link{estimateRegnTables}}
+#' @seealso  \code{\link{estimateRegns}}
 #' @references 
 #' Roberts, M., Stewart, B., Tingley, D., and Airoldi, E. (2013)
 #' "The structural topic model and applied social science." In Advances in
@@ -78,15 +80,24 @@
 #' temp<-textProcessor(documents=gadarian$open.ended.response,
 #' metadata=gadarian, verbose = FALSE)
 #' out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
-#' X <- model.matrix(~1+out$meta$treatment + out$meta$pid_rep + 
-#' out$meta$treatment * out$meta$pid_rep)[,-1]
-#' X_seed <- as.matrix(out$meta$treatment)
+#' out$meta$noTreatment <- ifelse(out$meta$treatment == 1, -1, 1)
 #' ## low max iteration number just for testing
-#' sts_estimate <- sts(X, X_seed, out, numTopics = 3, verbose = FALSE, 
-#' parallelize = FALSE, maxIter = 3, initialization = 'anchor')
+#' sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out, K = 3, maxIter = 2)
 #' @export
-sts = function(X, X_seed, corpus, numTopics, maxIter = 100, initialization = "stm", estimation = "lasso", verbose = TRUE, parallelize = FALSE, stmSeed = NULL) {
+sts = function(prevalence_sentiment, initializationVar, corpus, K, maxIter = 100, convTol = 1e-5, initialization = "anchor", kappaEstimation = "adjusted", verbose = TRUE, parallelize = FALSE, stmSeed = NULL) {
 
+  # if (!is.null(seed)) {set.seed(seed)}
+  if(inherits(prevalence_sentiment,"formula")) {
+    X <- model.matrix(prevalence_sentiment, data = corpus$meta)[,-1, drop = FALSE]
+  } else {
+    X <- prevalence_sentiment
+  }
+  if(inherits(initializationVar,"formula")) {
+    X_seed <- model.matrix(initializationVar, data = corpus$meta)[,-1, drop = FALSE]
+  } else {
+    X_seed <- initializationVar
+  }
+  
   if (parallelize) {
     # Register the parallel backend
     cl <- parallel::makeCluster(parallel::detectCores() - 1)
@@ -124,15 +135,10 @@ sts = function(X, X_seed, corpus, numTopics, maxIter = 100, initialization = "st
     
     
   }
-  # if (cpp) {
-  #   Rcpp::sourceCpp("sts.cpp")
-  # }  
-  conv_criteria <- 1e-5
+
+  conv_criteria <- convTol
   topicreportevery <- 10
-  estimation = estimation
-  
-  # set.seed(2091208)
-  
+  estimation = kappaEstimation
   nc_X <- ncol(X)
   D <- length(corpus$documents)
   V <- length(corpus$vocab)
@@ -141,11 +147,11 @@ sts = function(X, X_seed, corpus, numTopics, maxIter = 100, initialization = "st
   wcounts <- table(wcountvec)
   mv <- as.numeric(log(wcounts/sum(wcounts)))
   
-  K <- numTopics
-  if (verbose) {cat("\nStarting initialization...")}
+  K <- K
+  if (verbose) {cat("\nStarting Initialization...")}
   
   
-  if (verbose) {cat("Initializing Beta...")}
+  if (verbose) {cat("Beta...")}
   if (initialization == "anchor") {
     ## anchor words initialization
     mod.out <- suppressWarnings(stm(corpus$documents, corpus$vocab, K, verbose = FALSE,
@@ -155,10 +161,10 @@ sts = function(X, X_seed, corpus, numTopics, maxIter = 100, initialization = "st
     mod.out <- stmSeed
     if (is.null(stmSeed))
       mod.out <- suppressWarnings(stm(corpus$documents, corpus$vocab, K, verbose = FALSE, content = X_seed,
-                                      prevalence=~X, data=data.frame(X), max.em.its = 10, LDAbeta = FALSE))
+                                      prevalence=~X, data=data.frame(X), max.em.its = 100, LDAbeta = FALSE))
   }
   
-  if (verbose) {cat("Initializing Sigma, mu, and alpha...")}
+  if (verbose) {cat("Sigma, mu, and alpha...")}
   ## define the other parameters
   Sigma_Inv.est <- diag(1/20, 2*K-1)
   Sigma_Inv.est[1:(K-1),1:(K-1)] <- mod.out$invsigma
@@ -171,7 +177,7 @@ sts = function(X, X_seed, corpus, numTopics, maxIter = 100, initialization = "st
   Gamma.est <- mu$gamma
   
   ## start sequence to get kappa
-  if (verbose) {cat("Initializing Kappa...")}
+  if (verbose) {cat("Kappa...")}
   rho <- 0    
   kappa.est <- list(kappa_t = matrix(0, V, K), kappa_s = matrix(0, V, K))
   
@@ -423,7 +429,7 @@ sts = function(X, X_seed, corpus, numTopics, maxIter = 100, initialization = "st
         cat(msg)
       }
       if (verbose && iter %% topicreportevery==0) {
-        print.topWords(list(alpha = alpha.est, kappa = kappa.est, sigma = sigma, mv = mv, vocab = mod.out$vocab))
+        printTopWords(list(alpha = alpha.est, kappa = kappa.est, sigma = sigma, mv = mv, vocab = mod.out$vocab))
       }        
     }     
     iter <- iter + 1
@@ -434,5 +440,7 @@ sts = function(X, X_seed, corpus, numTopics, maxIter = 100, initialization = "st
     # Stop the cluster when done
     parallel::stopCluster(cl)
   }
+  class(final.est) <- "STS"
+
   return(final.est)
 }

@@ -28,16 +28,13 @@ library("tm"); library("stm"); library("sts")
 temp<-textProcessor(documents=gadarian$open.ended.response,
 metadata=gadarian, verbose = FALSE)
 out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
-X <- model.matrix(~1+out$meta$treatment + out$meta$pid_rep + 
-out$meta$treatment * out$meta$pid_rep)[,-1]
-X_seed <- as.matrix(out$meta$treatment)
-out <- make.heldout(out$documents, out$vocab)
+out$meta$noTreatment <- ifelse(out$meta$treatment == 1, -1, 1)
+out_ho <- make.heldout(out$documents, out$vocab)
 ## low max iteration number just for testing
-sts_estimate <- sts(X, X_seed, out, numTopics = 3, verbose = FALSE, 
-parallelize = FALSE, maxIter = 3, initialization = 'anchor')
-sm <- sample(x=1:length(out$missing$index), 
-size = length(out$missing$index)*0.8, replace = TRUE)
-d.h <- list(index = out$missing$index[sm], docs = out$missing$docs[sm])
+sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out, K = 3, maxIter = 2)
+sm <- sample(x=1:length(out_ho$missing$index), 
+size = length(out_ho$missing$index)*0.8, replace = TRUE)
+d.h <- list(index = out_ho$missing$index[sm], docs = out_ho$missing$docs[sm])
 heldoutLikelihood(mv=sts_estimate$mv, kappa=sts_estimate$kappa, 
 alpha=sts_estimate$alpha, missing=d.h)$expected.heldout
 }

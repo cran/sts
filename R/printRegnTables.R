@@ -3,6 +3,7 @@
 #' Prints estimated regression tables from estimateRegnTables()
 #' 
 #' @param x the estimated regression tables from estimateRegnTables()
+#' @param topics Vector of topics to display. Defaults to all topics.
 #' @param digits minimum number of significant digits to be used for most numbers.
 #' @param signif.stars logical; if TRUE, P-values are additionally encoded 
 #' visually as ‘significance stars’ in order to help scanning of long 
@@ -16,27 +17,28 @@
 #' temp<-textProcessor(documents=gadarian$open.ended.response,
 #' metadata=gadarian, verbose = FALSE)
 #' out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
-#' X <- model.matrix(~1+out$meta$treatment + out$meta$pid_rep + 
-#' out$meta$treatment * out$meta$pid_rep)[,-1]
-#' X_seed <- as.matrix(out$meta$treatment)
+#' out$meta$noTreatment <- ifelse(out$meta$treatment == 1, -1, 1)
 #' ## low max iteration number just for testing
-#' sts_estimate <- sts(X, X_seed, out, numTopics = 3, verbose = FALSE, 
-#' parallelize = FALSE, maxIter = 3, initialization = 'anchor')
-#' regn_tables <- estimateRegnTables(sts_estimate$alpha, mu = sts_estimate$mu, 
-#' sigma = sts_estimate$sigma, X = X)
-#' printRegnTables(regn_tables)
+#' sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out, K = 3, maxIter = 2)
+#' regns <- estimateRegns(sts_estimate, ~treatment*pid_rep, out)
+#' printRegnTables(x = regns)
 #' }
 #' @export
-printRegnTables <- function(x, digits = max(3L, getOption("digits") - 3L), 
+printRegnTables <- function(x, topics = NULL, digits = max(3L, getOption("digits") - 3L), 
                              signif.stars = getOption("show.signif.stars"), ...) {
 #  cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
 #      "\n\n", sep = "")
   K <- length(x)/2
-  for(i in 1:length(x)) {
+  if (is.null(topics)) {
+    prevSentIndex <- 1:length(x)
+  } else {
+    prevSentIndex <- c(topics, topics + K)
+  }
+  for(i in prevSentIndex) {
     if (i <= K) {
-      cat(sprintf("\nTopic %d alpha_p:\n", i))
+      cat(sprintf("\nTopic %d prevalence:\n", i))
     } else {
-      cat(sprintf("\nTopic %d alpha_s:\n", i - K))
+      cat(sprintf("\nTopic %d sentiment:\n", i - K))
     }
     cat("\nCoefficients:\n")
     coefs <- x[[i]]

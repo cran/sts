@@ -5,23 +5,26 @@
 \title{Variational EM for the Structural Topic and Sentiment-Discourse (STS) Model}
 \usage{
 sts(
-  X,
-  X_seed,
+  prevalence_sentiment,
+  initializationVar,
   corpus,
-  numTopics,
+  K,
   maxIter = 100,
-  initialization = "stm",
-  estimation = "lasso",
+  convTol = 1e-05,
+  initialization = "anchor",
+  kappaEstimation = "adjusted",
   verbose = TRUE,
   parallelize = FALSE,
   stmSeed = NULL
 )
 }
 \arguments{
-\item{X}{Data frame of document-specific content covariates affect how much (prevalence) and
-the way in which a topic is discussed (sentiment-discourse).}
+\item{prevalence_sentiment}{A formula object with no response variable or a 
+design matrix with the covariates. The variables must be 
+contained in corpus$meta.}
 
-\item{X_seed}{A vector of length equal to the corpus size. This is the key experimental variable (e.g., review rating or binary indicator of experiment/control group.).}
+\item{initializationVar}{A formula with a single variable for use in the initialization of latent sentiment. This argument
+is usually the key experimental variable (e.g., review rating binary indicator of experiment/control group).}
 
 \item{corpus}{The document term matrix to be modeled in a sparse term count matrix with one row
 per document and one column per term. The object must be a list of with each element 
@@ -31,20 +34,22 @@ vocabulary words in the document.  The first row contains the 1-indexed
 vocabulary entry and the second row contains the number of times that term
 appears. This is the same format in the \code{\link[stm]{stm}} package.}
 
-\item{numTopics}{A positive integer (of size 2 or greater) representing
+\item{K}{A positive integer (of size 2 or greater) representing
 the desired number of topics.}
 
 \item{maxIter}{A positive integer representing the max number of VEM iterations allowed.}
 
-\item{initialization}{Character argument that allows the user to specify an initialization
-method. The default choice, \code{"stm"}, uses a fitted STM model (Roberts et al. 2014, 2016) 
-to initialize coefficients related to prevalence and sentiment-discourse. 
-One can also choose \code{"anchor"} to initialize prevalence according to anchor words and 
-the key experimental covariate identified in argument \code{X_seed}.}
+\item{convTol}{Convergence tolerance for the variational EM estimation algorithm; Default value = 1e-5.}
 
-\item{estimation}{A character input specifying how kappa should be estimated. \code{"lasso"} (default) allows for 
+\item{initialization}{Character argument that allows the user to specify an initialization
+method. The default choice, \code{"anchor"} to initialize prevalence according to anchor words and 
+the key experimental covariate identified in argument \code{initializationVar}. One can also use 
+\code{"stm"}, which uses a fitted STM model (Roberts et al. 2014, 2016) 
+to initialize coefficients related to prevalence and sentiment-discourse.}
+
+\item{kappaEstimation}{A character input specifying how kappa should be estimated. \code{"lasso"} allows for 
 penalties on the L1 norm.  We estimate a regularization path and then select the optimal
-shrinkage parameter using AIC. \code{"adjusted"} does not utilize the lasso penalty. 
+shrinkage parameter using AIC. \code{"adjusted"} (default) utilizes the lasso penalty with an adjusted aggregated Poisson regression. 
 All options use an approximation framework developed in Taddy (2013) called
 Distributed Multinomial Regression which utilizes a factorized poisson
 approximation to the multinomial.  See Li and Mankad (forthcoming) on the implementation here.}
@@ -93,12 +98,9 @@ library("tm"); library("stm"); library("sts")
 temp<-textProcessor(documents=gadarian$open.ended.response,
 metadata=gadarian, verbose = FALSE)
 out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
-X <- model.matrix(~1+out$meta$treatment + out$meta$pid_rep + 
-out$meta$treatment * out$meta$pid_rep)[,-1]
-X_seed <- as.matrix(out$meta$treatment)
+out$meta$noTreatment <- ifelse(out$meta$treatment == 1, -1, 1)
 ## low max iteration number just for testing
-sts_estimate <- sts(X, X_seed, out, numTopics = 3, verbose = FALSE, 
-parallelize = FALSE, maxIter = 3, initialization = 'anchor')
+sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out, K = 3, maxIter = 2)
 }
 \references{
 Roberts, M., Stewart, B., Tingley, D., and Airoldi, E. (2013)
@@ -114,5 +116,5 @@ Chen L. and Mankad, S. (forthcoming) "A Structural Topic and Sentiment-Discourse
 for Text Analysis" Management Science.
 }
 \seealso{
-\code{\link{estimateRegnTables}}
+\code{\link{estimateRegns}}
 }

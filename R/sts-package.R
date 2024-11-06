@@ -12,9 +12,11 @@
 #' 
 #' Function to fit the model: \code{\link{sts}} 
 #' 
-#' Functions for Post-Estimation: \code{\link{estimateRegnTables}}
-#' \code{\link{exclusivitySTS}} \code{\link{semanticCoherenceSTS}}
-#'  \code{\link{heldoutLikelihood}}
+#' Functions for Post-Estimation: \code{\link{estimateRegns}}
+#' \code{\link{topicExclusivity}} \code{\link{topicSemanticCoherence}}
+#'  \code{\link{heldoutLikelihood}} \code{\link{plotRepresentativeDocs}}
+#'  \code{\link{findRepresentativeDocs}} \code{\link{printTopWords}}
+#'   \code{\link{plot.STS}}
 #' 
 #' 
 #' @name sts-package

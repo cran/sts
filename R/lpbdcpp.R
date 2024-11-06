@@ -19,10 +19,9 @@
 #' temp<-textProcessor(documents=gadarian$open.ended.response,
 #' metadata=gadarian, verbose = FALSE)
 #' out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
-#' X <- model.matrix(~1+out$meta$treatment + out$meta$pid_rep + 
-#' out$meta$treatment * out$meta$pid_rep)[,-1]
-#' X_seed <- as.matrix(out$meta$treatment)
-#' sts_estimate <- sts(X, X_seed, out, numTopics = 3, maxIter = 10)
+#' out$meta$noTreatment <- ifelse(out$meta$treatment == 1, -1, 1)
+#' ## low max iteration number just for testing
+#' sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out, K = 3, maxIter = 2)
 #' # for document #1: 
 #' aelbo <- lpbdcpp(alpha_d = sts_estimate$alpha[1,], kappa_t=sts_estimate$kappa$kappa_t, 
 #' kappa_s=sts_estimate$kappa$kappa_s, Sigma_Inv = sts_estimate$sigma_inv, doc = out$documents[[1]], 
