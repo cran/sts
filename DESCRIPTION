@@ -2,8 +2,8 @@ Package: sts
 Type: Package
 Title: Estimation of the Structural Topic and Sentiment-Discourse Model
         for Text Analysis
-Version: 1.1
-Date: 2024-11-04
+Version: 1.2
+Date: 2024-11-25
 Author: Shawn Mankad [aut, cre],
   Li Chen [aut]
 Authors@R: c(person(given = "Shawn",
@@ -24,6 +24,6 @@ LinkingTo: Rcpp, RcppArmadillo
 Encoding: UTF-8
 RoxygenNote: 7.2.1
 NeedsCompilation: yes
-Packaged: 2024-11-06 14:35:02 UTC; shawnmankad
+Packaged: 2024-11-25 15:27:51 UTC; shawnmankad
 Repository: CRAN
-Date/Publication: 2024-11-06 16:10:02 UTC
+Date/Publication: 2024-11-25 16:00:02 UTC

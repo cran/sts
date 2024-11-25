@@ -4,14 +4,18 @@
 \alias{topicSemanticCoherence}
 \title{Semantic Coherence}
 \usage{
-topicSemanticCoherence(beta, documents, vocab, M = 10)
+topicSemanticCoherence(object, corpus, M = 10)
 }
 \arguments{
-\item{beta}{the beta probability  matrix (topic-word distributions) for a given document or alpha-level}
+\item{object}{Model output from sts}
 
-\item{documents}{the documents over which to calculate coherence}
-
-\item{vocab}{the vocabulary corresponding to the terms in the beta matrix}
+\item{corpus}{The document term matrix to be modeled in a sparse term count matrix with one row
+per document and one column per term. The object must be a list of with each element 
+corresponding to a document. Each document is represented
+as an integer matrix with two rows, and columns equal to the number of unique
+vocabulary words in the document.  The first row contains the 1-indexed
+vocabulary entry and the second row contains the number of times that term
+appears. This is the same format in the \code{\link[stm]{stm}} package.}
 
 \item{M}{the number of top words to consider per topic}
 }
@@ -22,6 +26,7 @@ a numeric vector containing semantic coherence for each topic
 Calculates semantic coherence for an STS model.
 }
 \examples{
+\donttest{
 #An example using the Gadarian data from the stm package.  From Raw text to 
 # fitted model using textProcessor() which leverages the tm Package
 library("tm"); library("stm"); library("sts")
@@ -30,10 +35,7 @@ metadata=gadarian, verbose = FALSE)
 out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
 out$meta$noTreatment <- ifelse(out$meta$treatment == 1, -1, 1)
 ## low max iteration number just for testing
-sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out, K = 3, maxIter = 2)
-full_beta_distn <- exp(sts_estimate$mv + sts_estimate$kappa$kappa_t + 
-sts_estimate$kappa$kappa_s \%*\% diag(apply(sts_estimate$alpha[,3:5], 2, mean)))
-full_beta_distn <- t(apply(full_beta_distn, 1, 
-function(m) m / colSums(full_beta_distn)))
-topicSemanticCoherence(full_beta_distn, out$documents, out$vocab)
+sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out, K = 3, maxIter = 2, verbose = FALSE)
+topicSemanticCoherence(sts_estimate, out)
+}
 }

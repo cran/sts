@@ -10,7 +10,7 @@
 #' labeling metric (see Roberts et al. 2014) with the weight set to .7 in 
 #' favor of exclusivity by default.
 #'  
-#' @param beta the beta probability  matrix (topic-word distributions) for a given document or alpha-level
+#' @param object Model output from sts
 #' @param M the number of top words to consider per topic
 #' @param frexw the frex weight
 #' 
@@ -42,15 +42,15 @@
 #' out$meta$noTreatment <- ifelse(out$meta$treatment == 1, -1, 1)
 #' ## low max iteration number just for testing
 #' sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out, K = 3, maxIter = 2)
-#' full_beta_distn <- exp(sts_estimate$mv + sts_estimate$kappa$kappa_t + 
-#' sts_estimate$kappa$kappa_s %*% diag(apply(sts_estimate$alpha[,3:5], 2, mean)))
-#' full_beta_distn <- t(apply(full_beta_distn, 1, 
-#' function(m) m / colSums(full_beta_distn)))
-#' topicExclusivity(full_beta_distn)
+#' topicExclusivity(sts_estimate)
 #' }
 #' @export
-topicExclusivity = function (beta, M = 10, frexw = 0.7) 
+topicExclusivity = function (object, M = 10, frexw = 0.7) 
 {
+  K <- (1 + ncol(object$alpha))/2
+  beta <- exp(object$mv + object$kappa$kappa_t + object$kappa$kappa_s %*% diag(apply(object$alpha[,1:K+K-1], 2, mean)))
+  beta <- t(apply(beta, 1, function(m) m / colSums(beta)))
+    
   w <- frexw
   tbeta <- beta
   s <- rowSums(tbeta)

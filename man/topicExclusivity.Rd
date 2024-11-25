@@ -4,10 +4,10 @@
 \alias{topicExclusivity}
 \title{Exclusivity}
 \usage{
-topicExclusivity(beta, M = 10, frexw = 0.7)
+topicExclusivity(object, M = 10, frexw = 0.7)
 }
 \arguments{
-\item{beta}{the beta probability  matrix (topic-word distributions) for a given document or alpha-level}
+\item{object}{Model output from sts}
 
 \item{M}{the number of top words to consider per topic}
 
@@ -40,11 +40,7 @@ out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
 out$meta$noTreatment <- ifelse(out$meta$treatment == 1, -1, 1)
 ## low max iteration number just for testing
 sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out, K = 3, maxIter = 2)
-full_beta_distn <- exp(sts_estimate$mv + sts_estimate$kappa$kappa_t + 
-sts_estimate$kappa$kappa_s \%*\% diag(apply(sts_estimate$alpha[,3:5], 2, mean)))
-full_beta_distn <- t(apply(full_beta_distn, 1, 
-function(m) m / colSums(full_beta_distn)))
-topicExclusivity(full_beta_distn)
+topicExclusivity(sts_estimate)
 }
 }
 \references{
