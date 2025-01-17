@@ -1,4 +1,4 @@
-#' Semantic Coherence
+#' Compute Semantic Coherence
 #' 
 #' Calculates semantic coherence for an STS model.
 #' 

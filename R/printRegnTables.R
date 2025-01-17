@@ -1,4 +1,4 @@
-#' Print estimated regression tables
+#' Print Estimated Regression Tables
 #' 
 #' Prints estimated regression tables from estimateRegnTables()
 #' 

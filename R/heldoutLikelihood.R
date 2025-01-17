@@ -1,4 +1,4 @@
-#' Heldout Log-Likelihood
+#' Compute Heldout Log-Likelihood
 #' 
 #' Compute the heldout log-likelihood of the STS model
 #' 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/topicSemanticCoherence.R
 \name{topicSemanticCoherence}
 \alias{topicSemanticCoherence}
-\title{Semantic Coherence}
+\title{Compute Semantic Coherence}
 \usage{
 topicSemanticCoherence(object, corpus, M = 10)
 }
@@ -10,7 +10,7 @@ topicSemanticCoherence(object, corpus, M = 10)
 \item{object}{Model output from sts}
 
 \item{corpus}{The document term matrix to be modeled in a sparse term count matrix with one row
-per document and one column per term. The object must be a list of with each element 
+per document and one column per term. The object must be a list of with each element
 corresponding to a document. Each document is represented
 as an integer matrix with two rows, and columns equal to the number of unique
 vocabulary words in the document.  The first row contains the 1-indexed

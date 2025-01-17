@@ -1,0 +1,10 @@
+\documentclass{article}
+\usepackage{pdfpages}
+
+
+% \VignetteIndexEntry{Using the STS package}
+% \VignetteEngine{knitr::knitr}
+
+\begin{document}
+\includepdf[pages=-, fitpaper=true]{usingSTS.pdf}
+\end{document}

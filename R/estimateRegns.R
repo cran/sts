@@ -18,7 +18,7 @@
 #' appears. This is the same format in the \code{\link[stm]{stm}} package. 
 #' 
 #' @return a list of tables with regression coefficient estimates. The first 
-#' <num-topic> elements pertain to prevalence; the latter  <num-topic> elements 
+#' num-topic elements pertain to prevalence; the latter  num-topic elements 
 #' pertain to sentiment-discourse.
 #' 
 #' @examples \donttest{

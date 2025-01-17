@@ -25,7 +25,6 @@
 #' plot(sts_estimate)
 #' plot(sts_estimate, n = 10, topic = c(1,2))
 #' }
-#' @export plot.STS
 #' @export
 plot.STS <- function(x, 
                      n=10, topics=NULL,

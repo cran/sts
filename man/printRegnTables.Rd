@@ -2,7 +2,7 @@
 % Please edit documentation in R/printRegnTables.R
 \name{printRegnTables}
 \alias{printRegnTables}
-\title{Print estimated regression tables}
+\title{Print Estimated Regression Tables}
 \usage{
 printRegnTables(
   x,
@@ -19,8 +19,8 @@ printRegnTables(
 
 \item{digits}{minimum number of significant digits to be used for most numbers.}
 
-\item{signif.stars}{logical; if TRUE, P-values are additionally encoded 
-visually as ‘significance stars’ in order to help scanning of long 
+\item{signif.stars}{logical; if TRUE, P-values are additionally encoded
+visually as ‘significance stars’ in order to help scanning of long
 coefficient tables. It defaults to the show.signif.stars slot of options.}
 
 \item{...}{other arguments suitable for stats::printCoefmat()}

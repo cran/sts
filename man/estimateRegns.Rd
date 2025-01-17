@@ -9,12 +9,12 @@ estimateRegns(object, prevalence_sentiment, corpus)
 \arguments{
 \item{object}{an sts object}
 
-\item{prevalence_sentiment}{A formula object with no response variable or a 
-design matrix with the covariates. If a formula, the variables must be 
+\item{prevalence_sentiment}{A formula object with no response variable or a
+design matrix with the covariates. If a formula, the variables must be
 contained in corpus$meta.}
 
 \item{corpus}{The document term matrix to be modeled in a sparse term count matrix with one row
-per document and one column per term. The object must be a list of with each element 
+per document and one column per term. The object must be a list of with each element
 corresponding to a document. Each document is represented
 as an integer matrix with two rows, and columns equal to the number of unique
 vocabulary words in the document.  The first row contains the 1-indexed
@@ -22,15 +22,15 @@ vocabulary entry and the second row contains the number of times that term
 appears. This is the same format in the \code{\link[stm]{stm}} package.}
 }
 \value{
-a list of tables with regression coefficient estimates. The first 
-<num-topic> elements pertain to prevalence; the latter  <num-topic> elements 
+a list of tables with regression coefficient estimates. The first
+num-topic elements pertain to prevalence; the latter  num-topic elements
 pertain to sentiment-discourse.
 }
 \description{
 Estimates regression tables for prevalence and sentiment/discourse.
 }
 \details{
-Estimate Gamma coefficients (along with standard errors, p-values, etc.) to  
+Estimate Gamma coefficients (along with standard errors, p-values, etc.) to
 assess how document-level meta-data determine prevalence and sentiment/discourse
 }
 \examples{

@@ -17,7 +17,7 @@
 \item{x}{Model output from sts.}
 
 \item{n}{Sets the number of words used to label each topic.  In perspective
-plots it approximately sets the total number of words in the plot. 
+plots it approximately sets the total number of words in the plot.
 n must be greater than or equal to 2}
 
 \item{topics}{Vector of topics to display. Defaults to all topics.}
@@ -29,7 +29,7 @@ n must be greater than or equal to 2}
 \item{\dots}{Additional parameters passed to plotting functions.}
 }
 \description{
-Produces a plot of the most likely words and their probabilities for each topic for different levels 
+Produces a plot of the most likely words and their probabilities for each topic for different levels
 of sentiment for an STS object.
 }
 \examples{

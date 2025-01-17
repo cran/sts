@@ -1,4 +1,4 @@
-#' Exclusivity
+#' Compute Exclusivity
 #' 
 #' Calculate an exclusivity metric for an STS model.
 #' 

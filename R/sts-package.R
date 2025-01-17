@@ -25,11 +25,26 @@
 #' 
 #' Maintainer: Shawn Mankad <smankad@@ncsu.edu>
 #' @seealso \code{\link{sts}}
-#' @references Chen L. and Mankad, S. (forthcoming) "A Structural Topic and 
+#' @references Chen L. and Mankad, S. (2024) "A Structural Topic and 
 #' Sentiment-Discourse Model for Text Analysis" Management Science.
 #' @keywords package
 #' 
-#' @import Rcpp, RcppArmadillo, glmnet, matrixStats, slam, foreach, doParallel, 
-#' parallel, stm, Matrix, mvtnorm
+#' @import glmnet
+#' @import matrixStats
+#' @import slam
+#' @import stm
+#' @import Matrix
+#' @import mvtnorm
+#' @import tm
+#' @import ggplot2
+#' @importFrom foreach foreach
+#' @importFrom foreach %dopar%
+#' @importFrom doParallel registerDoParallel
+#' @importFrom parallel mclapply
+#' @importFrom parallel stopCluster
+#' @importFrom stats model.matrix
+#' @importFrom stats optim
+#' @importFrom stats quantile
+#' @importFrom stats rnorm
 #' @useDynLib sts, .registration = TRUE
 NULL

@@ -2,7 +2,7 @@
 % Please edit documentation in R/heldoutLikelihood.R
 \name{heldoutLikelihood}
 \alias{heldoutLikelihood}
-\title{Heldout Log-Likelihood}
+\title{Compute Heldout Log-Likelihood}
 \usage{
 heldoutLikelihood(object, missing)
 }
@@ -12,7 +12,7 @@ heldoutLikelihood(object, missing)
 \item{missing}{list of which words and documents are in the heldout set}
 }
 \value{
-expected.heldout is the average of the held-out log-likelihood values 
+expected.heldout is the average of the held-out log-likelihood values
 for each document.
 }
 \description{

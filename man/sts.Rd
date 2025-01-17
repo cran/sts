@@ -19,15 +19,15 @@ sts(
 )
 }
 \arguments{
-\item{prevalence_sentiment}{A formula object with no response variable or a 
-design matrix with the covariates. The variables must be 
+\item{prevalence_sentiment}{A formula object with no response variable or a
+design matrix with the covariates. The variables must be
 contained in corpus$meta.}
 
 \item{initializationVar}{A formula with a single variable for use in the initialization of latent sentiment. This argument
 is usually the key experimental variable (e.g., review rating binary indicator of experiment/control group).}
 
 \item{corpus}{The document term matrix to be modeled in a sparse term count matrix with one row
-per document and one column per term. The object must be a list of with each element 
+per document and one column per term. The object must be a list of with each element
 corresponding to a document. Each document is represented
 as an integer matrix with two rows, and columns equal to the number of unique
 vocabulary words in the document.  The first row contains the 1-indexed
@@ -42,17 +42,17 @@ the desired number of topics.}
 \item{convTol}{Convergence tolerance for the variational EM estimation algorithm; Default value = 1e-5.}
 
 \item{initialization}{Character argument that allows the user to specify an initialization
-method. The default choice, \code{"anchor"} to initialize prevalence according to anchor words and 
-the key experimental covariate identified in argument \code{initializationVar}. One can also use 
-\code{"stm"}, which uses a fitted STM model (Roberts et al. 2014, 2016) 
+method. The default choice, \code{"anchor"} to initialize prevalence according to anchor words and
+the key experimental covariate identified in argument \code{initializationVar}. One can also use
+\code{"stm"}, which uses a fitted STM model (Roberts et al. 2014, 2016)
 to initialize coefficients related to prevalence and sentiment-discourse.}
 
-\item{kappaEstimation}{A character input specifying how kappa should be estimated. \code{"lasso"} allows for 
+\item{kappaEstimation}{A character input specifying how kappa should be estimated. \code{"lasso"} allows for
 penalties on the L1 norm.  We estimate a regularization path and then select the optimal
-shrinkage parameter using AIC. \code{"adjusted"} (default) utilizes the lasso penalty with an adjusted aggregated Poisson regression. 
+shrinkage parameter using AIC. \code{"adjusted"} (default) utilizes the lasso penalty with an adjusted aggregated Poisson regression.
 All options use an approximation framework developed in Taddy (2013) called
 Distributed Multinomial Regression which utilizes a factorized poisson
-approximation to the multinomial.  See Li and Mankad (forthcoming) on the implementation here.}
+approximation to the multinomial.  See Li and Mankad (2024) on the implementation here.}
 
 \item{verbose}{A logical flag indicating whether information should be
 printed to the screen.}
@@ -62,33 +62,33 @@ printed to the screen.}
 \item{stmSeed}{A prefit STM model object to initialize the STS model. Note this is ignored unless initialization = "stm"}
 }
 \value{
-An object of class sts 
+An object of class sts
 
-\item{alpha}{Estimated prevalence and sentiment-discourse values for each document and topic} 
-\item{gamma}{Estimated regression coefficients that determine prevalence and sentiment/discourse for each topic} 
-\item{kappa}{Estimated kappa coefficients that determine sentiment-discourse and the topic-word distributions} 
+\item{alpha}{Estimated prevalence and sentiment-discourse values for each document and topic}
+\item{gamma}{Estimated regression coefficients that determine prevalence and sentiment/discourse for each topic}
+\item{kappa}{Estimated kappa coefficients that determine sentiment-discourse and the topic-word distributions}
 \item{sigma_inv}{Inverse of the covariance matrix for the alpha parameters}
-\item{sigma}{Covariance matrix for the alpha parameters} 
+\item{sigma}{Covariance matrix for the alpha parameters}
 \item{elbo}{the ELBO at each iteration of the estimation algorithm}
 \item{mv}{the baseline log-transformed occurrence rate of each word in the corpus}
-\item{runtime}{Time elapsed in seconds} 
-\item{vocab}{Vocabulary vector used} 
-\item{mu}{Mean (fitted) values for alpha based on document-level variables * estimated 
+\item{runtime}{Time elapsed in seconds}
+\item{vocab}{Vocabulary vector used}
+\item{mu}{Mean (fitted) values for alpha based on document-level variables * estimated
 Gamma for each document}
 }
 \description{
 Estimation of the STS Model using variational EM.
-The function takes sparse representation of a document-term matrix, covariates 
-for each document, and an integer number of topics and returns fitted model 
-parameters. See an overview of functions in the package here: 
+The function takes sparse representation of a document-term matrix, covariates
+for each document, and an integer number of topics and returns fitted model
+parameters. See an overview of functions in the package here:
 \code{\link{sts-package}}
 }
 \details{
-This is the main function for estimating the Structural Topic and 
-Sentiment-Discourse (STS) Model. Users provide a corpus of documents and a 
-number of topics.  Each word in a document comes from exactly one topic and 
-each document is represented by the proportion of its words that come from 
-each of the topics. The document-specific content covariates affect how much 
+This is the main function for estimating the Structural Topic and
+Sentiment-Discourse (STS) Model. Users provide a corpus of documents and a
+number of topics.  Each word in a document comes from exactly one topic and
+each document is represented by the proportion of its words that come from
+each of the topics. The document-specific content covariates affect how much
 (prevalence) and the way in which a topic is discussed (sentiment-discourse).
 }
 \examples{
@@ -106,13 +106,13 @@ sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out, K = 3, maxIter = 1,
 Roberts, M., Stewart, B., Tingley, D., and Airoldi, E. (2013)
 "The structural topic model and applied social science." In Advances in
 Neural Information Processing Systems Workshop on Topic Models: Computation,
-Application, and Evaluation. 
+Application, and Evaluation.
 
 Roberts M., Stewart, B. and Airoldi, E. (2016) "A model of text for
 experimentation in the social sciences" Journal of the American Statistical
 Association.
 
-Chen L. and Mankad, S. (forthcoming) "A Structural Topic and Sentiment-Discourse Model
+Chen L. and Mankad, S. (2024) "A Structural Topic and Sentiment-Discourse Model
 for Text Analysis" Management Science.
 }
 \seealso{

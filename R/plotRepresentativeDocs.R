@@ -1,4 +1,4 @@
-#' Function for plotting documents that load heavily on a topic
+#' Plot Documents that Load Heavily on a Topic
 #' 
 #' Produces a plot of the text of documents that load most heavily on topics for an STS object 
 #' 

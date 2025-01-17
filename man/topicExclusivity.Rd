@@ -2,7 +2,7 @@
 % Please edit documentation in R/topicExclusivity.R
 \name{topicExclusivity}
 \alias{topicExclusivity}
-\title{Exclusivity}
+\title{Compute Exclusivity}
 \usage{
 topicExclusivity(object, M = 10, frexw = 0.7)
 }
@@ -20,12 +20,12 @@ a numeric vector containing exclusivity for each topic
 Calculate an exclusivity metric for an STS model.
 }
 \details{
-Roberts et al 2014 proposed an exclusivity measure to help with topic model 
-selection. 
+Roberts et al 2014 proposed an exclusivity measure to help with topic model
+selection.
 
-The exclusivity measure includes some information on word frequency as well.  
+The exclusivity measure includes some information on word frequency as well.
 It is based on the FREX
-labeling metric (see Roberts et al. 2014) with the weight set to .7 in 
+labeling metric (see Roberts et al. 2014) with the weight set to .7 in
 favor of exclusivity by default.
 }
 \examples{
@@ -44,18 +44,18 @@ topicExclusivity(sts_estimate)
 }
 }
 \references{
-Mimno, D., Wallach, H. M., Talley, E., Leenders, M., and 
-McCallum, A. (2011, July). "Optimizing semantic coherence in topic models." 
-In Proceedings of the Conference on Empirical Methods in 
-Natural Language Processing (pp. 262-272). Association for 
+Mimno, D., Wallach, H. M., Talley, E., Leenders, M., and
+McCallum, A. (2011, July). "Optimizing semantic coherence in topic models."
+In Proceedings of the Conference on Empirical Methods in
+Natural Language Processing (pp. 262-272). Association for
 Computational Linguistics. Chicago
 
-Bischof and Airoldi (2012) "Summarizing topical content with word frequency 
-and exclusivity" In Proceedings of the International Conference on 
+Bischof and Airoldi (2012) "Summarizing topical content with word frequency
+and exclusivity" In Proceedings of the International Conference on
 Machine Learning.
 
-Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J., 
-Gadarian, S., Albertson, B., et al. (2014). 
-"Structural topic models for open ended survey responses." American Journal 
+Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J.,
+Gadarian, S., Albertson, B., et al. (2014).
+"Structural topic models for open ended survey responses." American Journal
 of Political Science, 58(4), 1064-1082.
 }

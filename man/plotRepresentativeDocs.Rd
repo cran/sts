@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotRepresentativeDocs.R
 \name{plotRepresentativeDocs}
 \alias{plotRepresentativeDocs}
-\title{Function for plotting documents that load heavily on a topic}
+\title{Plot Documents that Load Heavily on a Topic}
 \usage{
 plotRepresentativeDocs(object, text.cex = 1, width = 100)
 }

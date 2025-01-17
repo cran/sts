@@ -5,27 +5,27 @@
 \alias{sts-package}
 \title{A Structural Topic and Sentiment-Discourse Model for Text Analysis}
 \description{
-This package implements the Structural Topic and Sentiment-Discourse  
-(STS) model, which allows researchers to estimate topic models with 
-document-level metadata that determines both topic prevalence and 
-sentiment-discourse. The sentiment-discourse is modeled as a document-level 
-latent variable for each topic that modulates the word frequency within a 
-topic. These latent topic sentiment-discourse variables are controlled by 
-the document-level metadata. The STS model can be useful for regression 
-analysis with text data in addition to topic modeling's traditional 
+This package implements the Structural Topic and Sentiment-Discourse
+(STS) model, which allows researchers to estimate topic models with
+document-level metadata that determines both topic prevalence and
+sentiment-discourse. The sentiment-discourse is modeled as a document-level
+latent variable for each topic that modulates the word frequency within a
+topic. These latent topic sentiment-discourse variables are controlled by
+the document-level metadata. The STS model can be useful for regression
+analysis with text data in addition to topic modeling's traditional
 use of descriptive analysis.
 }
 \details{
-Function to fit the model: \code{\link{sts}} 
+Function to fit the model: \code{\link{sts}}
 
 Functions for Post-Estimation: \code{\link{estimateRegns}}
 \code{\link{topicExclusivity}} \code{\link{topicSemanticCoherence}}
- \code{\link{heldoutLikelihood}} \code{\link{plotRepresentativeDocs}}
- \code{\link{findRepresentativeDocs}} \code{\link{printTopWords}}
-  \code{\link{plot.STS}}
+\code{\link{heldoutLikelihood}} \code{\link{plotRepresentativeDocs}}
+\code{\link{findRepresentativeDocs}} \code{\link{printTopWords}}
+\code{\link{plot.STS}}
 }
 \references{
-Chen L. and Mankad, S. (forthcoming) "A Structural Topic and 
+Chen L. and Mankad, S. (2024) "A Structural Topic and
 Sentiment-Discourse Model for Text Analysis" Management Science.
 }
 \seealso{
@@ -34,6 +34,6 @@ Sentiment-Discourse Model for Text Analysis" Management Science.
 \author{
 Author: Shawn Mankad and Li Chen
 
-Maintainer: Shawn Mankad <smankad@ncsu.edu>
+Maintainer: Shawn Mankad \href{mailto:smankad@ncsu.edu}{smankad@ncsu.edu}
 }
 \keyword{package}
