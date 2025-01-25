@@ -18,9 +18,8 @@
 #' sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out, K = 3, maxIter = 2)
 #' printTopWords(sts_estimate)
 #' }
-#' @method printTopWords STS
 #' @export
-printTopWords.STS = function(object, n = 10, lowerPercentile = 0.05, upperPercentile = 0.95) {
+printTopWords = function(object, n = 10, lowerPercentile = 0.05, upperPercentile = 0.95) {
   mv <- object$mv
   kappa.est <- object$kappa
   alpha.est <- object$alpha
@@ -68,22 +67,5 @@ printTopWords.STS = function(object, n = 10, lowerPercentile = 0.05, upperPercen
   cat(toprint)
   
   # return(1)        
-}
-
-#' A Generic Function to Print Top Words
-#' 
-#' @description
-#' This is a generic function that prints the top words for each 
-#' document for low, average, and high levels of 
-#' sentiment-discourse
-#'
-#' @param object Model output from sts
-#' @param n number of words to print to console for each topic
-#' @param lowerPercentile Percentile to calculate a representative negative sentiment document.
-#' @param upperPercentile Percentile to calculate a representative positive sentiment document.
-#' @export
-#' @seealso \code{\link{printTopWords.STS}} for the method.
-printTopWords <- function(object, n = 10, lowerPercentile = 0.05, upperPercentile = 0.95) {
-  UseMethod("printTopWords")
 }
 

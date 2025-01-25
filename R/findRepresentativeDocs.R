@@ -19,9 +19,8 @@
 #' docs <- findRepresentativeDocs(sts_estimate, out$meta$open.ended.response, topic = 3, n = 4)
 #' plotRepresentativeDocs(docs, text.cex = 0.7, width = 100)
 #' }
-#' @method findRepresentativeDocs STS
 #' @export
-findRepresentativeDocs.STS = function(object, corpus_text, topic, n = 3) {
+findRepresentativeDocs = function(object, corpus_text, topic, n = 3) {
   K <- (1 + ncol(object$alpha))/2
   
   expeta <- exp(cbind(object$alpha[,1:(K-1), drop = FALSE],0))
@@ -49,20 +48,3 @@ findRepresentativeDocs.STS = function(object, corpus_text, topic, n = 3) {
   
   data.frame(text = corpus_text[ind], sentiment_quartile = titles, index = ind)
 }  
-
-#' A Generic Function to Identify Documents that Load Heavily on a Topic
-#' 
-#' @description
-#' This is a generic function that extracts documents with the 
-#' highest prevalence for a given topic.
-#'
-#' @param object Model output from sts
-#' @param corpus_text vector of text documents, usually contained in the output of prepDocuments
-#' @param topic a single topic number
-#' @param n number of documents to extract
-#' @export
-#' @seealso \code{\link{findRepresentativeDocs.STS}} for the method.
-findRepresentativeDocs <- function(object, corpus_text, topic, n = 3) {
-  UseMethod("findRepresentativeDocs")
-}
-
