@@ -9,15 +9,15 @@
 #' as an integer matrix with two rows, and columns equal to the number of unique
 #' vocabulary words in the document.  The first row contains the 1-indexed
 #' vocabulary entry and the second row contains the number of times that term
-#' appears. This is the same format in the \code{\link[stm]{stm}} package. 
+#' appears. This is the format produced by \code{\link{prepDocuments}}. 
 #' @param M the number of top words to consider per topic
 #' 
 #' @return a numeric vector containing semantic coherence for each topic
 #' 
 #' @examples \donttest{
-#' #An example using the Gadarian data from the stm package.  From Raw text to 
+#' #An example using the Gadarian data.  From raw text to 
 #' # fitted model using textProcessor() which leverages the tm Package
-#' library("tm"); library("stm"); library("sts")
+#' library("sts")
 #' temp<-textProcessor(documents=gadarian$open.ended.response,
 #' metadata=gadarian, verbose = FALSE)
 #' out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
@@ -67,13 +67,10 @@ topicSemanticCoherence = function (object, corpus, M = 10)
   documents <- corpus$documents
   vocab <- corpus$vocab
   
-  args <- asSTMCorpus(documents)
-  documents <- args$documents
   beta <- log(beta)
-  # triplet <- doc.to.ijv(documents)
-  # mat <- slam::simple_triplet_matrix(triplet$i, triplet$j, 
-  #                                    triplet$v, ncol = model$settings$dim$V)
-  mat <- convertCorpus(documents, vocab, type="slam")
+  triplet <- doc.to.ijv(documents)
+  mat <- slam::simple_triplet_matrix(triplet$i, triplet$j, triplet$v)
+  colnames(mat) <- vocab
   result = semCoh1beta(mat, M, beta = t(beta))
   return(result)
 }

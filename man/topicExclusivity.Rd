@@ -30,10 +30,10 @@ favor of exclusivity by default.
 }
 \examples{
  \donttest{
-#An example using the Gadarian data from the stm package.  
+#An example using the Gadarian data.  
 # From Raw text to fitted model using textProcessor() which leverages the 
 # tm Package
-library("tm"); library("stm"); library("sts")
+library("sts")
 temp<-textProcessor(documents=gadarian$open.ended.response,
 metadata=gadarian, verbose = FALSE)
 out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)

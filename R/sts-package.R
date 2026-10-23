@@ -12,6 +12,9 @@
 #' 
 #' Function to fit the model: \code{\link{sts}} 
 #' 
+#' Functions for preparing text: \code{\link{textProcessor}}
+#' \code{\link{prepDocuments}} \code{\link{make.heldout}}
+#' 
 #' Functions for Post-Estimation: \code{\link{estimateRegns}}
 #' \code{\link{topicExclusivity}} \code{\link{topicSemanticCoherence}}
 #'  \code{\link{heldoutLikelihood}} \code{\link{plotRepresentativeDocs}}
@@ -19,20 +22,25 @@
 #'   \code{\link{plot.STS}}
 #' 
 #' 
+#' Since version 1.6 the package does not depend on the stm package: the
+#' spectral (anchor word) initialization, the STM fit used by 
+#' \code{initialization = "stm"}, and the text-preparation helpers are 
+#' implemented internally, adapted from stm (Roberts, Stewart and Tingley; 
+#' MIT license).
+#' 
 #' @name sts-package
-#' @docType package
+#' @aliases sts-package
 #' @author Author: Shawn Mankad and Li Chen
 #' 
 #' Maintainer: Shawn Mankad <smankad@@ncsu.edu>
 #' @seealso \code{\link{sts}}
-#' @references Chen L. and Mankad, S. (2024) "A Structural Topic and 
-#' Sentiment-Discourse Model for Text Analysis" Management Science.
+#' @references Chen, L. and Mankad, S. (2025) "A Structural Topic and
+#' Sentiment-Discourse Model for Text Analysis" Management Science, 71(7), pp.5767-5787.
 #' @keywords package
 #' 
 #' @import glmnet
 #' @import matrixStats
 #' @import slam
-#' @import stm
 #' @import Matrix
 #' @import mvtnorm
 #' @import tm
@@ -46,5 +54,8 @@
 #' @importFrom stats optim
 #' @importFrom stats quantile
 #' @importFrom stats rnorm
+#' @importFrom stats runif
+#' @importFrom SnowballC wordStem
+#' @importFrom Rcpp evalCpp
 #' @useDynLib sts, .registration = TRUE
-NULL
+"_PACKAGE"

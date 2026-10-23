@@ -15,7 +15,7 @@ corresponding to a document. Each document is represented
 as an integer matrix with two rows, and columns equal to the number of unique
 vocabulary words in the document.  The first row contains the 1-indexed
 vocabulary entry and the second row contains the number of times that term
-appears. This is the same format in the \code{\link[stm]{stm}} package.}
+appears. This is the format produced by \code{\link{prepDocuments}}.}
 
 \item{M}{the number of top words to consider per topic}
 }
@@ -27,9 +27,9 @@ Calculates semantic coherence for an STS model.
 }
 \examples{
 \donttest{
-#An example using the Gadarian data from the stm package.  From Raw text to 
+#An example using the Gadarian data.  From raw text to 
 # fitted model using textProcessor() which leverages the tm Package
-library("tm"); library("stm"); library("sts")
+library("sts")
 temp<-textProcessor(documents=gadarian$open.ended.response,
 metadata=gadarian, verbose = FALSE)
 out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)

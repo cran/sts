@@ -7,7 +7,7 @@
 heldoutLikelihood(object, missing)
 }
 \arguments{
-\item{object}{an sts object, typically after applying \code{\link[stm]{make.heldout}}}
+\item{object}{an sts object, typically estimated on a corpus created with \code{\link{make.heldout}}}
 
 \item{missing}{list of which words and documents are in the heldout set}
 }
@@ -20,12 +20,12 @@ Compute the heldout log-likelihood of the STS model
 }
 \examples{
 \donttest{
-library("tm"); library("stm"); library("sts")
+library("sts")
 temp<-textProcessor(documents=gadarian$open.ended.response,
 metadata=gadarian, verbose = FALSE)
 out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
 out$meta$noTreatment <- ifelse(out$meta$treatment == 1, -1, 1)
-out_ho <- make.heldout(out$documents, out$vocab)
+out_ho <- make.heldout(out$documents, out$vocab, seed = 1)
 out_ho$meta <- out$meta
 ## low max iteration number just for testing
 sts_estimate <- sts(~ treatment*pid_rep, ~ noTreatment, out_ho, K = 3, maxIter = 2, verbose = FALSE)

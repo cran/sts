@@ -12,7 +12,7 @@ sts(
   maxIter = 100,
   convTol = 1e-05,
   initialization = "anchor",
-  kappaEstimation = "adjusted",
+  kappaEstimation = "lasso",
   verbose = TRUE,
   parallelize = FALSE,
   stmSeed = NULL
@@ -32,7 +32,8 @@ corresponding to a document. Each document is represented
 as an integer matrix with two rows, and columns equal to the number of unique
 vocabulary words in the document.  The first row contains the 1-indexed
 vocabulary entry and the second row contains the number of times that term
-appears. This is the same format in the \code{\link[stm]{stm}} package.}
+appears. This is the format produced by \code{\link{prepDocuments}} (and used by
+the stm package).}
 
 \item{K}{A positive integer (of size 2 or greater) representing
 the desired number of topics.}
@@ -45,21 +46,31 @@ the desired number of topics.}
 method. The default choice, \code{"anchor"} to initialize prevalence according to anchor words and
 the key experimental covariate identified in argument \code{initializationVar}. One can also use
 \code{"stm"}, which uses a fitted STM model (Roberts et al. 2014, 2016)
-to initialize coefficients related to prevalence and sentiment-discourse.}
+to initialize coefficients related to prevalence and sentiment-discourse.
+The STM model is fit internally (with \code{initializationVar} as the content
+covariate), so the stm package does not need to be installed. Its topic
+proportions initialize the prevalence variables, and its content-covariate
+word effects initialize kappa: for each topic, the sentiment-discourse
+coefficients are the slope (and the topic coefficients the intercept) of a
+document-weighted least-squares fit of the STM content effects on the centered
+levels of \code{initializationVar}, which reproduces the STM topic-word
+distributions exactly when \code{initializationVar} has two levels.}
 
-\item{kappaEstimation}{A character input specifying how kappa should be estimated. \code{"lasso"} allows for
+\item{kappaEstimation}{A character input specifying how kappa should be estimated. \code{"lasso"} (default) allows for
 penalties on the L1 norm.  We estimate a regularization path and then select the optimal
-shrinkage parameter using AIC. \code{"adjusted"} (default) utilizes the lasso penalty with an adjusted aggregated Poisson regression.
+shrinkage parameter using AIC. \code{"adjusted"} utilizes the lasso penalty with an adjusted aggregated Poisson regression.
 All options use an approximation framework developed in Taddy (2013) called
 Distributed Multinomial Regression which utilizes a factorized poisson
-approximation to the multinomial.  See Li and Mankad (2024) on the implementation here.}
+approximation to the multinomial.  See Chen and Mankad (2025) on the implementation here.}
 
 \item{verbose}{A logical flag indicating whether information should be
 printed to the screen.}
 
 \item{parallelize}{A logical flag indicating whether to parallelize the estimation using all but one CPU cores on your local machine.}
 
-\item{stmSeed}{A prefit STM model object to initialize the STS model. Note this is ignored unless initialization = "stm"}
+\item{stmSeed}{A prefit STM model object (e.g., from \code{stm::stm()} with
+\code{initializationVar} as the content covariate) to initialize the STS model.
+Note this is ignored unless initialization = "stm"}
 }
 \value{
 An object of class sts
@@ -92,9 +103,9 @@ each of the topics. The document-specific content covariates affect how much
 (prevalence) and the way in which a topic is discussed (sentiment-discourse).
 }
 \examples{
-#An example using the Gadarian data from the stm package.  From Raw text to 
+#An example using the Gadarian data.  From raw text to 
 # fitted model using textProcessor() which leverages the tm Package
-library("tm"); library("stm"); library("sts")
+library("sts")
 temp<-textProcessor(documents=gadarian$open.ended.response,
 metadata=gadarian, verbose = FALSE)
 out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
@@ -112,8 +123,8 @@ Roberts M., Stewart, B. and Airoldi, E. (2016) "A model of text for
 experimentation in the social sciences" Journal of the American Statistical
 Association.
 
-Chen L. and Mankad, S. (2024) "A Structural Topic and Sentiment-Discourse Model
-for Text Analysis" Management Science.
+Chen, L. and Mankad, S. (2025) "A Structural Topic and Sentiment-Discourse Model
+for Text Analysis" Management Science, 71(7), pp.5767-5787.
 }
 \seealso{
 \code{\link{estimateRegns}}

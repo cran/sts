@@ -15,14 +15,14 @@
 #' as an integer matrix with two rows, and columns equal to the number of unique
 #' vocabulary words in the document.  The first row contains the 1-indexed
 #' vocabulary entry and the second row contains the number of times that term
-#' appears. This is the same format in the \code{\link[stm]{stm}} package. 
+#' appears. This is the format produced by \code{\link{prepDocuments}}. 
 #' 
 #' @return a list of tables with regression coefficient estimates. The first 
 #' num-topic elements pertain to prevalence; the latter  num-topic elements 
 #' pertain to sentiment-discourse.
 #' 
 #' @examples \donttest{
-#' library("tm"); library("stm"); library("sts")
+#' library("sts")
 #' temp<-textProcessor(documents=gadarian$open.ended.response,
 #' metadata=gadarian, verbose = FALSE)
 #' out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
@@ -84,7 +84,6 @@ estimateRegns = function(object, prevalence_sentiment, corpus) {
     r <- z$residuals
     f <- z$fitted.values
     
-    mss <- ifelse(attr(z$terms, "intercept"), sum((f - mean(f))^2), sum(f^2)) 
     rss <- sum(r^2)
     
     resvar <- rss/rdf

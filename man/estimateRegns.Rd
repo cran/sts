@@ -19,7 +19,7 @@ corresponding to a document. Each document is represented
 as an integer matrix with two rows, and columns equal to the number of unique
 vocabulary words in the document.  The first row contains the 1-indexed
 vocabulary entry and the second row contains the number of times that term
-appears. This is the same format in the \code{\link[stm]{stm}} package.}
+appears. This is the format produced by \code{\link{prepDocuments}}.}
 }
 \value{
 a list of tables with regression coefficient estimates. The first
@@ -35,7 +35,7 @@ assess how document-level meta-data determine prevalence and sentiment/discourse
 }
 \examples{
 \donttest{
-library("tm"); library("stm"); library("sts")
+library("sts")
 temp<-textProcessor(documents=gadarian$open.ended.response,
 metadata=gadarian, verbose = FALSE)
 out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)

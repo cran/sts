@@ -15,7 +15,7 @@
 #' @examples
 #' \donttest{
 #' #Examples with the Gadarian Data
-#' library("tm"); library("stm"); library("sts")
+#' library("sts")
 #' temp<-textProcessor(documents=gadarian$open.ended.response,
 #' metadata=gadarian, verbose = FALSE)
 #' out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)
@@ -87,7 +87,7 @@ plot.STS <- function(x,
   index <- df$index
   words <- df$words
 
-  df$topic <- factor(df$topic, levels = paste0("Topic ", 1:10))
+  df$topic <- factor(df$topic, levels = paste0("Topic ", 1:K))
   
   df$Model <- factor(df$Model, levels = c("STS: Average", "STS: Negative", "STS: Positive"))
   

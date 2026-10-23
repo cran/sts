@@ -21,7 +21,7 @@ Prints the top words for each document for low, average, and high levels of sent
 \examples{
 \donttest{
 #Examples with the Gadarian Data
-library("tm"); library("stm"); library("sts")
+library("sts")
 temp<-textProcessor(documents=gadarian$open.ended.response,
 metadata=gadarian, verbose = FALSE)
 out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)

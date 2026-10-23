@@ -13,7 +13,7 @@
 #' @return Prints estimated regression tables from estimateRegnTables() to console
 #' 
 #' @examples \donttest{
-#' library("tm"); library("stm"); library("sts")
+#' library("sts")
 #' temp<-textProcessor(documents=gadarian$open.ended.response,
 #' metadata=gadarian, verbose = FALSE)
 #' out <- prepDocuments(temp$documents, temp$vocab, temp$meta, verbose = FALSE)

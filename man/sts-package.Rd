@@ -18,15 +18,24 @@ use of descriptive analysis.
 \details{
 Function to fit the model: \code{\link{sts}}
 
+Functions for preparing text: \code{\link{textProcessor}}
+\code{\link{prepDocuments}} \code{\link{make.heldout}}
+
 Functions for Post-Estimation: \code{\link{estimateRegns}}
 \code{\link{topicExclusivity}} \code{\link{topicSemanticCoherence}}
 \code{\link{heldoutLikelihood}} \code{\link{plotRepresentativeDocs}}
 \code{\link{findRepresentativeDocs}} \code{\link{printTopWords}}
 \code{\link{plot.STS}}
+
+Since version 1.6 the package does not depend on the stm package: the
+spectral (anchor word) initialization, the STM fit used by
+\code{initialization = "stm"}, and the text-preparation helpers are
+implemented internally, adapted from stm (Roberts, Stewart and Tingley;
+MIT license).
 }
 \references{
-Chen L. and Mankad, S. (2024) "A Structural Topic and
-Sentiment-Discourse Model for Text Analysis" Management Science.
+Chen, L. and Mankad, S. (2025) "A Structural Topic and
+Sentiment-Discourse Model for Text Analysis" Management Science, 71(7), pp.5767-5787.
 }
 \seealso{
 \code{\link{sts}}
